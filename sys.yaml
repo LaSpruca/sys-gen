@@ -1,0 +1,38 @@
+calls:
+  - n: 1
+    name: read
+    params:
+      fp: usize
+      buffer: "[u8]"
+    args:
+      - [val, fp]
+      - [pio, buffer]
+      - [len, buffer]
+    effect: ["buffer"]
+    return: number
+  - n: 1
+    name: write
+    params:
+      fp: usize
+      data: "[u8]"
+    args:
+      - [val, fp]
+      - [ptr, bytes]
+      - [len, bytes]
+    return: number
+  - n: 2
+    name: open
+    params:
+      path: String
+      options: usize
+    args:
+      - [val, path]
+      - [val, options]
+    return: usize
+  - n: 60
+    name: exit
+    params:
+      status: usize
+    args:
+      - [val, status]
+    return: number
