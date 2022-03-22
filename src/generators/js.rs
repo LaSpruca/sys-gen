@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::fmt::format;
 
 pub fn generate_js(enums: &HashMap<String, HashMap<String, usize>>) -> String {
     format!(
@@ -15,7 +14,7 @@ module.exports = {{
                 "var {name};\n\
             (function({name}) {{\n\
             {}\n\
-            }})(Yes || (Yes = {{}}))",
+            }})({name} || ({name} = {{}}))",
                 generate_body(name, fields)
             ))
             .collect::<Vec<String>>()

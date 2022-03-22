@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::str::Chars;
 
 use super::first_upper;
 use crate::{generators::get_from_type_map, types::Call};

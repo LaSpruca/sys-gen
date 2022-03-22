@@ -1,4 +1,4 @@
-use std::{collections::HashMap, process::exit};
+use std::process::exit;
 
 pub fn generate_effect(effect: &Vec<String>, params: &Vec<(String, String)>) -> String {
     if effect.is_empty() {
