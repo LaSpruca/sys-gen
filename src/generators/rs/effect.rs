@@ -1,23 +1,15 @@
 use std::{collections::HashMap, process::exit};
 
-pub fn generate_effect(effect: &Vec<String>, params: &HashMap<String, String>) -> String {
+pub fn generate_effect(effect: &Vec<String>, params: &Vec<(String, String)>) -> String {
     if effect.is_empty() {
         return String::new();
     }
 
     effect
         .iter()
-        .filter(|effect| params.contains_key(effect.to_owned()))
         .map(|effect| {
-            (
-                effect.to_owned(),
-                params.get(effect).unwrap(),
-                params
-                    .keys()
-                    .map(ToOwned::to_owned)
-                    .position(|f| f == effect.to_owned())
-                    .unwrap(),
-            )
+            let index = params.iter().position(|(f, _)| f == effect).unwrap();
+            (effect.to_owned(), params[index].clone().1, index)
         })
         .map(|(name, rs_type, index)| match rs_type.as_str() {
             "[u8]" => effect_u8_arr(name, index),
@@ -32,7 +24,8 @@ pub fn generate_effect(effect: &Vec<String>, params: &HashMap<String, String>) -
 
 fn effect_u8_arr(name: String, index: usize) -> String {
     format!(
-        "\tlet {name}_js: Handle<JsArray> = cx.argument({index})?;  
+        "\tprintln!(\"{{{name}:?}}\");
+\tlet {name}_js: Handle<JsArray> = cx.argument({index})?;
 \tfor (index, val) in {name}.iter().enumerate() {{
 \t\tlet num = cx.number(index as f64);
 \t\tlet other_num = cx.number((*val) as f64);

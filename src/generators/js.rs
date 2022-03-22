@@ -1,26 +1,40 @@
 use std::collections::HashMap;
+use std::fmt::format;
 
-use super::first_upper;
-use crate::{types::Call, generators::get_from_type_map};
-
-pub fn generate_js(def: &Call, type_map: &HashMap<String, String>) -> String {
-    let Call {
-        name,
-        params,
-        return_type,
-        ..
-    } = def.to_owned();
-
+pub fn generate_js(enums: &HashMap<String, HashMap<String, usize>>) -> String {
     format!(
-        "export declare function sys{}({}): {return_type};",
-        first_upper(name.as_str()),
-        params
+        r#"{};
+
+module.exports = {{
+{},
+{t}...require("./index.node")
+}};"#,
+        enums
             .iter()
-            .map(|(name, rs_type)| format!(
-                "{name}: {}",
-                get_from_type_map(type_map, rs_type)
+            .map(|(name, fields)| format!(
+                "var {name};\n\
+            (function({name}) {{\n\
+            {}\n\
+            }})(Yes || (Yes = {{}}))",
+                generate_body(name, fields)
             ))
             .collect::<Vec<String>>()
-            .join(", ")
+            .join(";\n"),
+        enums
+            .iter()
+            .map(|(name, _)| format!("\t{name}"))
+            .collect::<Vec<String>>()
+            .join(", "),
+        t = "\t"
     )
+}
+
+fn generate_body(name: &String, fields: &HashMap<String, usize>) -> String {
+    fields
+        .iter()
+        .map(|(field_name, value)| {
+            format!("\t{name}[{name}[\"{field_name}\"] = {value}] = \"{field_name}\"")
+        })
+        .collect::<Vec<String>>()
+        .join("\n")
 }

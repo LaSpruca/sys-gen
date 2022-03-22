@@ -1,15 +1,18 @@
 mod js;
 mod rs;
+mod ts;
 
 use std::collections::HashMap;
 
 use crate::types::SyscallsDef;
 
+use crate::generators::js::generate_js;
+use crate::generators::ts::generate_ts_enum;
 use common_macros::hash_map;
-use js::generate_js;
 use rs::generate_rs;
+use ts::generate_ts;
 
-pub fn generate(def: SyscallsDef) {
+pub fn generate(def: SyscallsDef) -> (String, String, String) {
     let type_reg: HashMap<String, String> = hash_map! {
         "usize" => "number",
         "[u8]" => "number[]",
@@ -19,7 +22,12 @@ pub fn generate(def: SyscallsDef) {
     .map(|(a, b)| (a.to_string(), b.to_string()))
     .collect();
 
-    let mut js_file = String::new();
+    let js_file = generate_js(&def.enums);
+
+    let mut ts_file = generate_ts_enum(&def.enums);
+
+    ts_file += "\n\n";
+
     let mut rs_body = "use std::arch::asm;
 use neon::prelude::*;"
         .to_string();
@@ -30,8 +38,8 @@ fn main(mut cx: ModuleContext) -> NeonResult<()> {"
 
     for call in def.calls.iter() {
         println!("Generating syscall {}", &call.name);
-        js_file += &format!("{}\n", generate_js(call, &type_reg));
-        rs_body += &format!("\n\n{}", generate_rs(call, &type_reg));
+        ts_file += &format!("{}\n", generate_ts(call, &type_reg));
+        rs_body += &format!("\n\n{}", generate_rs(call));
         rs_main += &format!(
             "\n\tcx.export_function(\"sys{}\", sys_{})?;",
             first_upper(call.name.as_str()),
@@ -47,6 +55,8 @@ fn main(mut cx: ModuleContext) -> NeonResult<()> {"
     println!("{js_file}\n");
     println!("---------------------------------   lib.rs   ---------------------------------");
     println!("{rs_file}");
+
+    (rs_file, js_file, ts_file)
 }
 
 fn first_upper(s: &str) -> String {

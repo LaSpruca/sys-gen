@@ -1,0 +1,10 @@
+{
+  "name": "syscall",
+  "version": "0.1.0",
+  "description": "You necessary JS Syscall Binding",
+  "main": "index.js",
+  "type": "commonjs",
+  "types": "./index.d.ts",
+  "author": "Nathan Hare <me@laspruca.nz>",
+  "license": "MIT"
+}

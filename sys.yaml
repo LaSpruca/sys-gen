@@ -1,38 +1,67 @@
+enums:
+  OpenFlags:
+    O_RDONLY: 0
+    O_WRONLY: 1
+    O_RDWR: 2
+    O_APPEND: 1024
+    O_CREAT: 64
+    O_DSYNC: 4096
+    O_EXCL: 128
+    O_NOCTTY: 256
+    O_NONBLOCK: 2048
+    O_SYNC: 1052672
+    O_TRUNC: 512
 calls:
+  # Close
   - n: 1
     name: read
     params:
-      fp: usize
-      buffer: "[u8]"
+      - [fp, usize]
+      - [buffer, "[u8]"]
     args:
       - [val, fp]
-      - [pio, buffer]
+      - [ptr, buffer]
       - [len, buffer]
     effect: ["buffer"]
-    return: number
+    return: usize
+
+  # Write
   - n: 1
     name: write
     params:
-      fp: usize
-      data: "[u8]"
+      - [fp, usize]
+      - [bytes, "[u8]"]
     args:
       - [val, fp]
       - [ptr, bytes]
       - [len, bytes]
-    return: number
+    return: usize
+
+  # Open
   - n: 2
     name: open
     params:
-      path: String
-      options: usize
+      - [path, String]
+      - [options, $OpenFlags]
     args:
-      - [val, path]
+      - [ptr, path]
       - [val, options]
     return: usize
+
+  # Close
+  - n: 3
+    name: close
+    params:
+      - [fp, usize]
+    args:
+      - [val, fp]
+    return: usize
+
+  # Exit
   - n: 60
     name: exit
     params:
-      status: usize
+      - [status, usize]
     args:
       - [val, status]
-    return: number
+    return: usize
