@@ -13,6 +13,8 @@ use rs::generate_rs;
 use ts::generate_ts;
 
 pub fn generate(def: SyscallsDef) -> (String, String, String) {
+    println!("--------- Generating code ---------");
+
     let type_reg: HashMap<String, String> = hash_map! {
         "usize" => "number",
         "[u8]" => "number[]",
@@ -37,7 +39,7 @@ fn main(mut cx: ModuleContext) -> NeonResult<()> {"
         .to_string();
 
     for call in def.calls.iter() {
-        println!("Generating syscall {}", &call.name);
+        println!("[INFO] Generating syscall {}", &call.name);
         ts_file += &format!("{}\n", generate_ts(call, &type_reg));
         rs_body += &format!("\n\n{}", generate_rs(call));
         rs_main += &format!(
@@ -51,10 +53,7 @@ fn main(mut cx: ModuleContext) -> NeonResult<()> {"
 
     let rs_file = format!("{rs_body}\n\n{rs_main}");
 
-    println!("--------------------------------- index.d.ts ---------------------------------");
-    println!("{js_file}\n");
-    println!("---------------------------------   lib.rs   ---------------------------------");
-    println!("{rs_file}");
+    println!("------- Generation complete -------");
 
     (rs_file, js_file, ts_file)
 }

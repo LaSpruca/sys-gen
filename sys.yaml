@@ -12,8 +12,8 @@ enums:
     O_SYNC: 1052672
     O_TRUNC: 512
 calls:
-  # Close
-  - n: 1
+  # Read
+  - n: 0
     name: read
     params:
       - [fp, usize]

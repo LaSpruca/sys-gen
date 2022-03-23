@@ -1,4 +1,6 @@
-/target
-/syscall
+/**/target
 /.idea
 /test
+/generated
+/**/node_modules
+/syscall/index.*

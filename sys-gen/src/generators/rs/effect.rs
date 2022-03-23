@@ -23,8 +23,7 @@ pub fn generate_effect(effect: &Vec<String>, params: &Vec<(String, String)>) -> 
 }
 
 fn effect_u8_arr(name: String, index: usize) -> String {
-    format!(
-        "\tprintln!(\"{{{name}:?}}\");
+    format!("
 \tlet {name}_js: Handle<JsArray> = cx.argument({index})?;
 \tfor (index, val) in {name}.iter().enumerate() {{
 \t\tlet num = cx.number(index as f64);

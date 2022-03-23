@@ -1,8 +1,15 @@
 # SYS-GEN
----
+
+--------
 I noticed that JS contained no bindings for syscalls, so I decided to make one myself! This project uses sys.yaml to
 generate syscall bindings using rust and [neon](https://neon-bindings.com/).
-This project is still under construction so any help would be appreciated
+This project is still under construction so any help would be appreciated.
+
+This project consists of two crates:`sys-gen`, the crate responsible for generating the rust code, and the
+`syscall` crate, which uses a build.rs script to generate the rust code as well as an index.d.ts and index.js.
+
+By default, the build.rs file of `syscall` will look for the syscall definitions in `../sys.yaml`, this can
+be changed however with the `SYS_YAML_PATH` environment variable.
 
 ## sys.yaml
 The sys.yaml file consists of two parts, `calls` and `enums`.
